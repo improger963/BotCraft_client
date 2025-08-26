@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { InputField } from '../components/auth/InputField';
 import { PrimaryButton } from '../components/auth/PrimaryButton';
@@ -82,7 +83,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
         <div className="flex items-center justify-between">
           <Checkbox id="remember-me" label="Remember me" />
           <div className="text-sm">
-            <a href="#/password-reset" className="font-medium text-cyan-400 hover:text-cyan-300 transition-colors duration-300" onClick={(e) => { e.preventDefault(); navigate('/password-reset'); }}>
+            <a href="#/password-reset" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-300" onClick={(e) => { e.preventDefault(); navigate('/password-reset'); }}>
               Forgot your password?
             </a>
           </div>
@@ -94,9 +95,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
           </PrimaryButton>
         </div>
       </form>
-      <p className="mt-8 text-center text-sm text-gray-400">
+      <p className="mt-8 text-center text-sm text-gray-500">
         Not a member?{' '}
-        <a href="#/register" className="font-medium text-cyan-400 hover:text-cyan-300 transition-colors duration-300" onClick={(e) => { e.preventDefault(); navigate('/register'); }}>
+        <a href="#/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-300" onClick={(e) => { e.preventDefault(); navigate('/register'); }}>
           Sign up now
         </a>
       </p>

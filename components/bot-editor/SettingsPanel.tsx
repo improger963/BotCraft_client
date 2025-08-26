@@ -1,17 +1,39 @@
 
 import React, { useEffect, useState } from 'react';
 import { useBotEditorStore } from '../../store/botEditorStore';
-import { InputField } from '../auth/InputField';
-// Fix: Import NodeData to properly type the form state.
-import { NodeType, ActionType, NodeData } from '../../types';
+import { NodeData, NodeType, ActionType } from '../../types';
+
+const SettingsInputField: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string }> = ({ label, id, ...props }) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-semibold text-gray-600 mb-1">
+      {label}
+    </label>
+    <input
+      id={id}
+      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors"
+      {...props}
+    />
+  </div>
+);
+
+const SettingsTextareaField: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }> = ({ label, id, ...props }) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-semibold text-gray-600 mb-1">
+      {label}
+    </label>
+    <textarea
+      id={id}
+      rows={4}
+      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors"
+      {...props}
+    />
+  </div>
+);
 
 export const SettingsPanel: React.FC = () => {
   const { selectedNodeId, nodes, updateNodeData } = useBotEditorStore();
   const selectedNode = nodes.find((n) => n.id === selectedNodeId);
 
-  // Using a key with the state forces a re-render and state reset when the node changes
-  // Fix: Provide an explicit type for formData to prevent TypeScript errors
-  // when accessing properties on what could be an empty object initially.
   const [formData, setFormData] = useState<Partial<NodeData>>(selectedNode?.data || {});
 
   useEffect(() => {
@@ -27,7 +49,7 @@ export const SettingsPanel: React.FC = () => {
   };
 
   const handleBlur = () => {
-    if (selectedNodeId) {
+    if (selectedNodeId && JSON.stringify(formData) !== JSON.stringify(selectedNode?.data)) {
       updateNodeData(selectedNodeId, formData);
     }
   };
@@ -40,7 +62,7 @@ export const SettingsPanel: React.FC = () => {
 
     return (
        <div className="space-y-4">
-        <InputField
+        <SettingsInputField
           id="label"
           name="label"
           label="Node Label"
@@ -49,21 +71,17 @@ export const SettingsPanel: React.FC = () => {
           onBlur={handleBlur}
         />
         {nodeType === NodeType.Action && actionType === ActionType.SendMessage && (
-          <div>
-            <label htmlFor="text" className="block text-sm font-medium text-gray-300 mb-2">Message Text</label>
-            <textarea
-              id="text"
-              name="text"
-              value={formData.text || ''}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              rows={4}
-              className="w-full px-4 py-2 bg-gray-900/70 border rounded-md text-white placeholder-gray-500 transition-all duration-300 ease-in-out border-gray-700 focus:ring-cyan-400/30 focus:border-cyan-400 focus:outline-none focus:ring-2"
-            />
-          </div>
+          <SettingsTextareaField
+            id="text"
+            name="text"
+            label="Message Text"
+            value={formData.text || ''}
+            onChange={handleInputChange}
+            onBlur={handleBlur}
+          />
         )}
         {nodeType === NodeType.Action && actionType === ActionType.UserInput && (
-          <InputField
+          <SettingsInputField
             id="variableName"
             name="variableName"
             label="Variable Name"
@@ -73,7 +91,7 @@ export const SettingsPanel: React.FC = () => {
           />
         )}
         {nodeType === NodeType.Condition && (
-          <InputField
+          <SettingsInputField
             id="condition"
             name="condition"
             label="Condition Logic"
@@ -84,7 +102,7 @@ export const SettingsPanel: React.FC = () => {
           />
         )}
          {nodeType === NodeType.Delay && (
-          <InputField
+          <SettingsInputField
             id="duration"
             name="duration"
             label="Duration (ms)"
@@ -95,7 +113,7 @@ export const SettingsPanel: React.FC = () => {
           />
         )}
         {nodeType === NodeType.Event && (
-          <InputField
+          <SettingsInputField
             id="eventName"
             name="eventName"
             label="Event Name"
@@ -110,18 +128,22 @@ export const SettingsPanel: React.FC = () => {
 
   if (!selectedNode) {
     return (
-      <aside className="w-80 flex-shrink-0 bg-gray-900/50 p-6 border-l border-cyan-400/20 z-10">
-        <h3 className="text-lg font-semibold text-white mb-4">Settings</h3>
-        <p className="text-gray-400 text-sm">Select a node to view its properties.</p>
+      <aside className="w-80 flex-shrink-0 bg-[#F9F9F9] p-6 border-l border-gray-200 z-10">
+        <h3 className="text-lg font-bold text-gray-800 mb-4 font-montserrat">Settings</h3>
+        <p className="text-gray-500 text-sm">Select a node to view its properties.</p>
       </aside>
     );
   }
 
   return (
-    <aside className="w-80 flex-shrink-0 bg-gray-900/50 p-6 border-l border-cyan-400/20 flex flex-col gap-4 z-10">
-      <h3 className="text-lg font-semibold text-white">Edit: {selectedNode.data.label}</h3>
-      <p className="text-xs text-gray-500 -mt-3 pb-2 border-b border-gray-700/50">Type: {selectedNode.data.actionType || selectedNode.data.type}</p>
-      {renderSettings()}
+    <aside className="w-80 flex-shrink-0 bg-[#F9F9F9] p-6 border-l border-gray-200 flex flex-col gap-4 z-10 overflow-y-auto">
+      <div>
+        <h3 className="text-lg font-bold text-gray-800 truncate font-montserrat">{selectedNode.data.label}</h3>
+        <p className="text-xs text-gray-500 uppercase tracking-wider">{selectedNode.data.actionType || selectedNode.data.type}</p>
+      </div>
+      <div className="border-t border-gray-200 pt-4">
+        {renderSettings()}
+      </div>
     </aside>
   );
 };

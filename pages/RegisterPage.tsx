@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { InputField } from '../components/auth/InputField';
 import { PrimaryButton } from '../components/auth/PrimaryButton';
@@ -113,9 +114,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
           </PrimaryButton>
         </div>
       </form>
-      <p className="mt-8 text-center text-sm text-gray-400">
+      <p className="mt-8 text-center text-sm text-gray-500">
         Already a member?{' '}
-        <a href="#/login" className="font-medium text-cyan-400 hover:text-cyan-300 transition-colors duration-300" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>
+        <a href="#/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-300" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>
           Sign in
         </a>
       </p>

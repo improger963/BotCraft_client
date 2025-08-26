@@ -1,62 +1,59 @@
 
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { InputField } from '../components/auth/InputField';
 import { PrimaryButton } from '../components/auth/PrimaryButton';
 import { AuthLayout } from '../components/auth/AuthLayout';
-import { apiRequestPasswordReset, ApiError } from '../services/authService';
+import { useAuthStore } from '../store/authStore';
 
 interface PasswordResetPageProps {
   navigate: (path: string) => void;
 }
 
 const PasswordResetPage: React.FC<PasswordResetPageProps> = ({ navigate }) => {
+  const { requestPasswordReset, isLoading, error, passwordResetSuccess, resetPasswordStatus } = useAuthStore();
   const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   
-  // Separate states for general and field-specific errors
-  const [generalError, setGeneralError] = useState('');
+  const [generalError, setGeneralError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setGeneralError('');
-    setFieldErrors({});
-
-    if (!email) {
-      setFieldErrors({ email: 'Please enter your email address.' });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await apiRequestPasswordReset(email);
-      setSubmitted(true);
-    } catch (err) {
-      if (err instanceof ApiError && err.fields) {
-        setFieldErrors(err.fields);
-        setGeneralError('Please correct the errors below.');
-      } else if (err instanceof Error) {
-        setGeneralError(err.message);
+  useEffect(() => {
+    // Reset status when component mounts and unmounts to clear previous state
+    resetPasswordStatus();
+    return () => resetPasswordStatus();
+  }, [resetPasswordStatus]);
+  
+  useEffect(() => {
+    if (error) {
+      if (typeof error === 'string') {
+        setGeneralError(error);
+        setFieldErrors({});
       } else {
-        setGeneralError('An unexpected error occurred.');
+        setFieldErrors(error as Record<string, string>);
+        setGeneralError('Please correct the errors below.');
       }
-    } finally {
-      setIsLoading(false);
+    } else {
+      setGeneralError(null);
+      setFieldErrors({});
     }
+  }, [error]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    requestPasswordReset(email);
   };
 
   return (
     <AuthLayout title="Reset your password" error={generalError}>
-      {submitted ? (
+      {passwordResetSuccess ? (
         <div className="text-center">
-          <p className="text-gray-300">
+          <p className="text-gray-600">
             If an account with that email exists, we've sent instructions to reset your password.
           </p>
         </div>
       ) : (
         <form className="space-y-6" onSubmit={handleSubmit} noValidate aria-busy={isLoading}>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-500">
             Enter your email address and we will send you a link to reset your password.
           </p>
           <InputField
@@ -78,9 +75,9 @@ const PasswordResetPage: React.FC<PasswordResetPageProps> = ({ navigate }) => {
           </div>
         </form>
       )}
-      <p className="mt-6 text-center text-sm text-gray-400">
+      <p className="mt-6 text-center text-sm text-gray-500">
         Remembered your password?{' '}
-        <a href="#/login" className="font-medium text-cyan-400 hover:text-cyan-300" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>
+        <a href="#/login" className="font-medium text-blue-600 hover:text-blue-500" onClick={(e) => { e.preventDefault(); navigate('/login'); }}>
           Sign in
         </a>
       </p>

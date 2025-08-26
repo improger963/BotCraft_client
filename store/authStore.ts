@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { AuthStore, LoginCredentials, RegisterUserData } from '../types';
-import { apiLogin, apiRegister } from '../services/authService';
+import { apiLogin, apiRegister, apiRequestPasswordReset } from '../services/authService';
 import { ApiError } from '../services/authService';
 
 export const useAuthStore = create<AuthStore>()(
@@ -13,6 +13,7 @@ export const useAuthStore = create<AuthStore>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      passwordResetSuccess: false,
       
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
@@ -44,6 +45,21 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
 
+      requestPasswordReset: async (email: string) => {
+        set({ isLoading: true, error: null, passwordResetSuccess: false });
+        try {
+          await apiRequestPasswordReset(email);
+          set({ isLoading: false, passwordResetSuccess: true });
+        } catch (error) {
+           if (error instanceof ApiError && error.fields) {
+            set({ error: error.fields, isLoading: false });
+          } else {
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            set({ error: errorMessage, isLoading: false });
+          }
+        }
+      },
+
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
         // Navigate to login page after logout by changing the hash.
@@ -53,7 +69,11 @@ export const useAuthStore = create<AuthStore>()(
 
       clearError: () => {
         set({ error: null });
-      }
+      },
+
+      resetPasswordStatus: () => {
+        set({ passwordResetSuccess: false, error: null });
+      },
     }),
     {
       name: 'auth-storage', // key in localStorage

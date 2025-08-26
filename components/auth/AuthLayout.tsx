@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GlobeIcon } from '../icons';
 
@@ -11,16 +12,16 @@ interface AuthLayoutProps {
 export const AuthLayout: React.FC<AuthLayoutProps> = ({ title, description, children, error }) => {
   return (
     <div className="w-full max-w-md">
-      <div className="p-8 space-y-6 bg-gray-900/60 backdrop-blur-xl border border-cyan-400/20 rounded-2xl shadow-2xl shadow-cyan-500/10">
+      <div className="p-8 space-y-6 bg-white border border-gray-200 rounded-2xl shadow-lg shadow-blue-500/10">
         <div className="text-center">
-          <GlobeIcon className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold tracking-tight text-white">{title}</h2>
-          {description && <p className="mt-2 text-sm text-gray-400">{description}</p>}
+          <GlobeIcon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h2>
+          {description && <p className="mt-2 text-sm text-gray-500">{description}</p>}
         </div>
         {children}
       </div>
       {error && (
-        <div className="mt-4 p-3 bg-red-900/50 border border-red-500/50 rounded-lg text-center text-red-300 animate-fade-in-fast" role="alert">
+        <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-lg text-center text-red-700 animate-fade-in-fast" role="alert">
           {error}
         </div>
       )}

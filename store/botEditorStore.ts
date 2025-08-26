@@ -9,25 +9,25 @@ const getInitialNodes = (): BotNode[] => [
   {
     id: 'trigger-1',
     type: 'custom',
-    position: { x: 100, y: 150 },
-    data: { type: NodeType.Trigger, label: 'On Message' },
+    position: { x: 250, y: 100 },
+    data: { type: NodeType.Trigger, label: 'User Sends a Message' },
   },
   {
     id: 'action-1',
     type: 'custom',
-    position: { x: 400, y: 150 },
+    position: { x: 550, y: 50 },
     data: { 
       type: NodeType.Action, 
       actionType: ActionType.SendMessage,
-      label: 'Welcome Message', 
-      text: 'Hello! Welcome to our service.' 
+      label: 'Send Welcome Message', 
+      text: 'Hello! How can I help you today?' 
     },
   },
 ];
 
 export const useBotEditorStore = create<BotEditorStore>((set, get) => ({
   nodes: getInitialNodes(),
-  edges: [{ id: 'e-trigger-1-action-1', source: 'trigger-1', target: 'action-1', animated: true }],
+  edges: [{ id: 'e-trigger-1-action-1', source: 'trigger-1', target: 'action-1', animated: true, style: { stroke: '#007ACC', strokeWidth: 2 } }],
   selectedNodeId: null,
 
   addNode: (node) => {
@@ -59,8 +59,13 @@ export const useBotEditorStore = create<BotEditorStore>((set, get) => ({
   },
 
   onConnect: (connection) => {
+    const newEdge = {
+        ...connection,
+        animated: true,
+        style: { stroke: '#007ACC', strokeWidth: 2 }
+    };
     set({
-      edges: addEdge(connection, get().edges),
+      edges: addEdge(newEdge, get().edges),
     });
   },
 }));

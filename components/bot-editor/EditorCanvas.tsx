@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
-import ReactFlow, { Background, MiniMap, Controls } from 'reactflow';
+
+import React, { useMemo, useRef, useCallback } from 'react';
+import ReactFlow, { Background, MiniMap, Controls, useReactFlow } from 'reactflow';
 import { useBotEditorStore } from '../../store/botEditorStore';
 import { BotNodeComponent } from './BotNode';
+import { BotNode, NodeData } from '../../types';
 
 export const EditorCanvas: React.FC = () => {
   const { 
@@ -10,8 +12,12 @@ export const EditorCanvas: React.FC = () => {
     onNodesChange, 
     onEdgesChange, 
     onConnect, 
-    setSelectedNodeId 
+    setSelectedNodeId,
+    addNode
   } = useBotEditorStore();
+
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const { screenToFlowPosition } = useReactFlow();
   
   const nodeTypes = useMemo(() => ({ custom: BotNodeComponent }), []);
 
@@ -23,9 +29,47 @@ export const EditorCanvas: React.FC = () => {
     setSelectedNodeId(node.id);
   };
 
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+
+      if (!reactFlowWrapper.current) {
+        return;
+      }
+
+      const type = event.dataTransfer.getData('application/reactflow');
+
+      // check if the dropped element is valid
+      if (typeof type === 'undefined' || !type) {
+        return;
+      }
+      
+      const { data } = JSON.parse(type);
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const newNode: BotNode = {
+        id: `${data.label.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+        type: 'custom',
+        position,
+        data: data as NodeData,
+      };
+
+      addNode(newNode);
+    },
+    [screenToFlowPosition, addNode]
+  );
 
   return (
-    <div className="flex-grow h-full bg-gray-900/30 relative">
+    <div className="flex-grow h-full bg-[#F2F2F2] relative" ref={reactFlowWrapper}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -36,9 +80,10 @@ export const EditorCanvas: React.FC = () => {
         onNodeClick={handleNodeClick}
         nodeTypes={nodeTypes}
         fitView
-        className="bg-gray-800/20"
+        onDrop={onDrop}
+        onDragOver={onDragOver}
       >
-        <Background color="#555" gap={24} />
+        <Background color="#ccc" gap={20} />
         <MiniMap nodeStrokeWidth={3} zoomable pannable />
         <Controls />
       </ReactFlow>

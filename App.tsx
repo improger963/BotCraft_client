@@ -69,7 +69,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/30 to-gray-900 text-white font-sans flex flex-col items-center justify-center p-4 overflow-hidden z-10">
+    <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col items-center justify-center p-4">
       {renderPage()}
     </div>
   );

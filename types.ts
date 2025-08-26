@@ -13,13 +13,16 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | Record<string, string> | null;
+  passwordResetSuccess: boolean;
 }
 
 export interface AuthActions {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (userData: RegisterUserData) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  resetPasswordStatus: () => void;
 }
 
 export type AuthStore = AuthState & AuthActions;
@@ -55,6 +58,7 @@ export interface NodeData {
   label: string;
   type: NodeType;
   actionType?: ActionType;
+  error?: string | null; // For displaying error state
   [key: string]: any;
 }
 
