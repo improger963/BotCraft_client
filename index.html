@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BotCraft - Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://aistudiocdn.com/reactflow@^11.11.4/dist/style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://aistudiocdn.com/react@^19.1.1",
+          "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+          "react/": "https://aistudiocdn.com/react@^19.1.1/",
+          "@google/genai": "https://aistudiocdn.com/@google/genai@^1.15.0",
+          "zustand": "https://aistudiocdn.com/zustand@^4.5.4",
+          "zustand/": "https://aistudiocdn.com/zustand@^4.5.4/",
+          "reactflow": "https://aistudiocdn.com/reactflow@^11.11.4"
+        }
+      }
+    </script>
+    <style>
+      #bg-stars, #bg-stars-2, #bg-stars-3 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-repeat: repeat;
+        background-position: 0 0;
+      }
+      #bg-stars {
+        background-image: radial-gradient(white 1px, transparent 1px);
+        background-size: 50px 50px;
+        opacity: 0.2;
+        animation: anim-stars 200s linear infinite;
+      }
+      #bg-stars-2 {
+        background-image: radial-gradient(white 1px, transparent 1px);
+        background-size: 100px 100px;
+        opacity: 0.15;
+        animation: anim-stars 150s linear infinite;
+      }
+      #bg-stars-3 {
+        background-image: radial-gradient(white 1px, transparent 1px);
+        background-size: 150px 150px;
+        opacity: 0.1;
+        animation: anim-stars 100s linear infinite;
+      }
+      @keyframes anim-stars {
+        from { transform: translateY(0px); }
+        to { transform: translateY(-2000px); }
+      }
+      .react-flow__handle-label {
+        position: absolute;
+        font-size: 11px;
+        color: #d1d5db;
+        pointer-events: none;
+        transform: translateY(-50%);
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900">
+    <div id="bg-stars"></div>
+    <div id="bg-stars-2"></div>
+    <div id="bg-stars-3"></div>
+    <div id="root" class="relative"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

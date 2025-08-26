@@ -1,0 +1,5 @@
+{
+  "name": "BotCraft Editor",
+  "description": "A sleek, node-based editor for designing, building, and visualizing conversational AI flows for the BotCraft application.",
+  "requestFramePermissions": []
+}
